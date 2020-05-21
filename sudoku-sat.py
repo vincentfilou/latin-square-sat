@@ -64,7 +64,8 @@ def exclusion_i(x,y):
         exclusion_column = Propositions.big_and(col, excl(i))
         exclusion_line = Propositions.big_and(li, excl(i))
         exclusion_square = Propositions.big_and(sq, excl(i))
-        return (Propositions.build_and( exclusion_column , Propositions.build_and(exclusion_line, exclusion_square)))
+        is_not = Propositions.build_atom(predicate_isnt(i)((x,y)))
+        return (Propositions.build_or(is_not,Propositions.build_and( exclusion_column , Propositions.build_and(exclusion_line, exclusion_square))))
     return f
 
 def exclusion_coord(p):
@@ -104,4 +105,3 @@ tree = Propositions.build_and(presence(),exclusion())
 normalized_tree = Propositions.normalize(tree)
 print(Propositions.check_tree(normalized_tree, False))
 clauses = Propositions.to_clauses(normalized_tree)
-print(clauses)
