@@ -54,7 +54,6 @@ def big_or(t,f):
         return build_or(big_or(t[0:1],f),big_or(t[1:],f))
 
 def to_clause(t):
-    res = ()
     if t['type'] == "atom":
         return [[t['atom']]]
     if t['type'] == 'and':
