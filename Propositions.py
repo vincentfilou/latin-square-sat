@@ -43,26 +43,44 @@ def normalize(p):
     
 def big_and(t,f):
     if len(t) == 1:
-        return build_atom(f(t[0]))
+        return f(t[0])
     else:
         return build_and(big_and(t[0:1],f),big_and(t[1:],f))
 
 def big_or(t,f):
     if len(t) == 1:
-        return build_atom(f(t[0]))
+        return f(t[0])
     else:
         return build_or(big_or(t[0:1],f),big_or(t[1:],f))
 
-def to_clause(t):
+def to_clauses(t):
     if t['type'] == "atom":
         return [[t['atom']]]
     if t['type'] == 'and':
-        return to_clause(t['left'])+to_clause(t['right'])
+        return to_clauses(t['left'])+to_clauses(t['right'])
     if t['type'] == 'or':
-        return [to_clause(t['left'])[0]+to_clause(t['right'])[0]]
+        return [to_clauses(t['left'])[0]+to_clauses(t['right'])[0]]
 
-def proposition_to_dimacs(p):
+def clauses_to_dimacs(file,c):
     pass
+
+def contains_or(tree):
+    if tree['type'] == "atom":
+        return False
+    if tree['type'] == 'or':
+        return True
+    else:
+        return contains_or(tree['left']) or  contains_or(tree['right'])
+
+def check_tree(tree,b):
+    if tree['type'] == "atom":
+        return True
+    if tree['type'] == 'and' and b == True:
+        return False
+    if tree['type'] == "or":
+        return check_tree(tree['left'],True) and check_tree(tree['right'],True)
+    if tree['type'] == "and":
+        return check_tree(tree['left'],b) and check_tree(tree['right'],b)
 
 def print_tree(p,acc):
     if p['type'] == 'atom':
@@ -77,10 +95,3 @@ def print_tree(p,acc):
 #print_tree(big_or(test_table,lambda x:x),"")
 
 #KO, voir test_tree_2
-
-# test_tree = build_or(build_and(build_atom(1), build_and(build_atom(2),build_atom(3))),build_and(build_atom(4),build_and(build_atom(5),build_atom(6))))
-test_tree_2 = build_or(build_and(build_atom(1),build_atom(2)),build_and(build_or(build_atom(3),build_atom(3)),build_atom(4)))
-n = normalize(test_tree_2)
-print_tree(n,"")
-print(to_clause(n))
-# print_tree(normalize(test_tree_2),"")
