@@ -53,6 +53,15 @@ def big_or(t,f):
     else:
         return build_or(big_or(t[0:1],f),big_or(t[1:],f))
 
+def to_clause(t):
+    res = ()
+    if t['type'] == "atom":
+        return [[t['atom']]]
+    if t['type'] == 'and':
+        return to_clause(t['left'])+to_clause(t['right'])
+    if t['type'] == 'or':
+        return [to_clause(t['left'])[0]+to_clause(t['right'])[0]]
+
 def proposition_to_dimacs(p):
     pass
 
@@ -71,5 +80,8 @@ def print_tree(p,acc):
 #KO, voir test_tree_2
 
 # test_tree = build_or(build_and(build_atom(1), build_and(build_atom(2),build_atom(3))),build_and(build_atom(4),build_and(build_atom(5),build_atom(6))))
-# test_tree_2 = build_or(build_and(build_atom(1),build_atom(2)),build_and(build_or(build_atom(3),build_atom(3)),build_atom(4)))
+test_tree_2 = build_or(build_and(build_atom(1),build_atom(2)),build_and(build_or(build_atom(3),build_atom(3)),build_atom(4)))
+n = normalize(test_tree_2)
+print_tree(n,"")
+print(to_clause(n))
 # print_tree(normalize(test_tree_2),"")
