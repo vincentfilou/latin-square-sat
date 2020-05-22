@@ -116,7 +116,7 @@ def one_digit():
 
 tree = Propositions.build_and(presence(),exclusion())
 tree1 = Propositions.build_and(tree, one_digit())
-normalized_tree = Propositions.normalize(tree)
+normalized_tree = Propositions.normalize(tree1)
 print(Propositions.check_tree(normalized_tree, False))
 clauses = Propositions.to_clauses(normalized_tree)
 Propositions.clauses_to_dimacs("test.txt", clauses)
