@@ -108,7 +108,7 @@ def one_digit_only(c):
         not_others = Propositions.big_and(to_exclude, lambda x:Propositions.build_atom(predicate_isnt(x)(c)))
         isnt_i = Propositions.build_atom(predicate_isnt(i)(c))
 
-        return Propositions.build_or(isnt_i, Proposition.big_and(range(0,10),one_digit_1 ))
+        return Propositions.build_or(isnt_i, not_others)
     return one_digit_1
 
 def one_digit():
