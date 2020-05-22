@@ -68,6 +68,11 @@ Pour tout i in range(1,10) :
       BigOr colonne(x), fun a,b => is(a,b,i) 
 ```
 
+### Un chiffre par case
+pour tout i in range(1,10):
+   pour tout c in Product(range(0,9), range(0,9))
+      predicate_isnt(i)(c) or BigAnd(range(0,10).remove(i), predicate_isnt(i)(c)) 
+
 ## Passage de la formule resultante en CNF
 
 voir Propositions/normalize

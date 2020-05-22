@@ -101,7 +101,21 @@ def presence_fun(i):
 def presence():
     return Propositions.big_and(range(1,10),presence_fun)
 
+def one_digit_only(c):
+    def one_digit_1(i):
+        to_exclude = range(0,10)
+        to_exclude.remove(i)
+        not_others = Propositions.big_and(to_exclude, lambda x:Propositions.build_atom(predicate_isnt(x)(c)))
+        isnt_i = Propositions.build_atom(predicate_isnt(i)(c))
+
+        return Propositions.build_or(isnt_i, Proposition.big_and(range(0,10),one_digit_1 ))
+    return one_digit_1
+
+def one_digit():
+    return Propositions.big_and(Product(range(0,9), range(0,9)),one_digit_only)
+
 tree = Propositions.build_and(presence(),exclusion())
+tree1 = Propositions.build_and(tree, one_digit())
 normalized_tree = Propositions.normalize(tree)
 print(Propositions.check_tree(normalized_tree, False))
 clauses = Propositions.to_clauses(normalized_tree)
