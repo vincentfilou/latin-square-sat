@@ -62,6 +62,16 @@ def to_clauses(t):
         return [to_clauses(t['left'])[0]+to_clauses(t['right'])[0]]
 
 def clauses_to_dimacs(file,c):
+    f = open(file,"w")
+    for i in c:
+        for j in i:
+            f.write(str(j)+" ")
+        f.write("0\n")
+    f.close()
+        
+
+
+
     pass
 
 def contains_or(tree):
