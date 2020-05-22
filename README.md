@@ -73,6 +73,16 @@ pour tout i in range(1,10):
    pour tout c in Product(range(0,9), range(0,9))
       predicate_isnt(i)(c) or BigAnd(range(0,10).remove(i), predicate_isnt(i)(c)) 
 
-## Passage de la formule resultante en CNF
+## Passage de la formule resultante en 3-CNF
 
 voir Propositions/normalize
+
+Partir de l'arbre normalisé et ajouter des clauses? 
+Pour chaque noeud, verifier s'il y a au plus 3 feuilles?
+Si quatre feuilles, introduire une variable comme si dessous:
+
+A or B or C or D or E
+F <-> C or G
+G <-> D or E
+~G or (D or E) and
+~(D or E) or G
