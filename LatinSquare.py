@@ -1,7 +1,8 @@
 import math
 import Propositions
+import Clauses
 
-nbChiffres = 2
+nbChiffres = 3
 
 def Product(a,b):
     product = []
@@ -47,13 +48,19 @@ def predicate_to_coord(p):
     v = (-((abs(p) % line_length) % (nbChiffres+1)),((abs(p)%line_length) % (nbChiffres+1)))[p > 0]
     return (x,y,v)
 
-def exists_line(x):
+def exists_line_(x):
     return Propositions.big_and(range(1,nbChiffres), lambda v:Propositions.big_or(line(x),lambda c:Propositions.build_atom(predicate_is(v)(c))))
 
-def exists_column(y):
+def exists_line():
+    return Propositions.big_and(range(0,nbChiffres), exists_line_)
+
+def exists_column_(y):
     return Propositions.big_and(range(1,nbChiffres+1), lambda v:Propositions.big_or(column(y),lambda c:Propositions.build_atom(predicate_is(v)(c))))
 
-#NOK multiple copies of subtree
+def exists_column():
+    return Propositions.big_and(range(0,nbChiffres), exists_column_)
+
+#NOK multiple copies of subtree?
 
 def one_per_line_inner(c):
     x,y = c
@@ -62,16 +69,45 @@ def one_per_line_inner(c):
     return Propositions.big_and(range(1,nbChiffres+1), lambda v:Propositions.build_or(Propositions.build_atom(predicate_isnt(v)(c)), Propositions.big_and(l, lambda c0:Propositions.build_atom(predicate_isnt(v)(c0)))))
 
 
-def one_per_line(y):
+def one_per_line_(y):
     return Propositions.big_and(line(y), one_per_line_inner)
 
-def one_per_column(y):
-    pass
 
-def one_per_coord(c):
-    pass
+def one_per_line():
+    return Propositions.big_and(range(0,nbChiffres),one_per_line_)
 
-print(predicate_to_coord(predicate_isnt(2)((1,1))))
-#Propositions.print_tree(exists_line(1),"")
-Propositions.print_tree(exists_column(1),"")
-Propositions.print_tree(one_per_line(0),"")
+
+def one_per_column_inner(c):
+    x,y = c
+    l = column(x)
+    l.remove(c)
+    return Propositions.big_and(range(1,nbChiffres+1), lambda v:Propositions.build_or(Propositions.build_atom(predicate_isnt(v)(c)), Propositions.big_and(l, lambda c0:Propositions.build_atom(predicate_isnt(v)(c0)))))
+
+
+def one_per_column_(x):
+    return Propositions.big_and(column(x), one_per_column_inner)
+
+def one_per_column():
+    return Propositions.big_and(range(0,nbChiffres),one_per_column_)
+
+def one_per_file_inner(c):
+    def f(v):
+        vs = [x for x in range(1,nbChiffres+1)]
+        vs.remove(v)
+        return Propositions.build_or(Propositions.build_atom(predicate_isnt(v)(c)),Propositions.big_and(vs, lambda v0: Propositions.build_atom(predicate_isnt(v0)(c))))
+    return f
+
+def one_per_file():
+    return Propositions.big_and(Product(range(0,nbChiffres),range(0,nbChiffres)),lambda c:Propositions.big_and(range(1,nbChiffres+1),one_per_file_inner(c)))
+
+exists = Propositions.build_and(exists_line(),exists_column())
+tree = Propositions.build_and(one_per_column(), Propositions.build_and(one_per_line(),Propositions.build_and(one_per_file(),exists)))
+normalized_tree = Propositions.normalize(tree)
+clauses = Propositions.to_clauses(normalized_tree)
+solved,values = Clauses.DP(clauses)
+result = []
+for c in values:
+    if 0 < c[0]:
+        result.append(predicate_to_coord(c[0]))
+
+print(result)
