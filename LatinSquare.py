@@ -2,7 +2,7 @@ import math
 import Propositions
 import Clauses
 
-nbChiffres = 5
+nbChiffres = 7
 
 def Product(a,b):
     product = []
