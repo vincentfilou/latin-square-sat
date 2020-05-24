@@ -2,7 +2,7 @@ import math
 import Propositions
 import Clauses
 
-nbChiffres = 3
+nbChiffres = 4
 
 def Product(a,b):
     product = []
@@ -38,7 +38,6 @@ def predicate_isnt(v):
         return -(((line_length*y)+(nbChiffres+1)*x)+v)
     return f
 
-#TODOu
 
 ## Transformation inverse
 def predicate_to_coord(p):
@@ -100,14 +99,28 @@ def one_per_file_inner(c):
 def one_per_file():
     return Propositions.big_and(Product(range(0,nbChiffres),range(0,nbChiffres)),lambda c:Propositions.big_and(range(1,nbChiffres+1),one_per_file_inner(c)))
 
+
+def print_result(r):
+    acc = ""
+    for y in range(0,nbChiffres):
+        for x in range(0,nbChiffres):
+            for c in r:
+                (a,b,v) = c
+                if a == x and b == y:
+                    acc+=str(v)+" "
+        acc += "\n"
+    print(acc)      
+
+
 exists = Propositions.build_and(exists_line(),exists_column())
 tree = Propositions.build_and(one_per_column(), Propositions.build_and(one_per_line(),Propositions.build_and(one_per_file(),exists)))
 normalized_tree = Propositions.normalize(tree)
 clauses = Propositions.to_clauses(normalized_tree)
+clauses =clauses+[[predicate_is(2)((0,0))]]
 solved,values = Clauses.DP(clauses)
-result = []
+result = set()
 for c in values:
     if 0 < c[0]:
-        result.append(predicate_to_coord(c[0]))
+        result.add(predicate_to_coord(c[0]))
 
-print(result)
+print_result(result)
