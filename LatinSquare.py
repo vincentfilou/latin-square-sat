@@ -2,7 +2,7 @@ import math
 import Propositions
 import Clauses
 
-nbChiffres = 4
+nbChiffres = 5
 
 def Product(a,b):
     product = []
@@ -116,11 +116,13 @@ exists = Propositions.build_and(exists_line(),exists_column())
 tree = Propositions.build_and(one_per_column(), Propositions.build_and(one_per_line(),Propositions.build_and(one_per_file(),exists)))
 normalized_tree = Propositions.normalize(tree)
 clauses = Propositions.to_clauses(normalized_tree)
-clauses =clauses+[[predicate_is(2)((0,0))]]
+clauses =clauses+[[predicate_is(3)((0,0))]]
 solved,values = Clauses.DP(clauses)
 result = set()
-for c in values:
-    if 0 < c[0]:
-        result.add(predicate_to_coord(c[0]))
-
-print_result(result)
+if solved == True:
+    for c in values:
+        if 0 < c[0]:
+            result.add(predicate_to_coord(c[0]))
+    print_result(result)
+else:
+    print("Unsolvable")
