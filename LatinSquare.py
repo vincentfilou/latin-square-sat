@@ -1,4 +1,5 @@
 import math
+import Propositions
 
 nbChiffres = 2
 
@@ -23,26 +24,54 @@ def line(y):
 ## Case (x,y) est egale a v
 def predicate_is(v):
     def f(c): 
-        line_length = nbChiffres*nbChiffres
+        line_length = nbChiffres*(nbChiffres+1)
         x,y = c
-        return ((line_length*y)+(nbChiffres)*x)+v
+        return ((line_length*y)+(nbChiffres+1)*x)+v
     return f
 
 ## Case (x,y) est differente de v
 def predicate_isnt(v):
     def f(c): 
+        line_length = nbChiffres*(nbChiffres+1)
         x,y = c
-        return -((nbChiffres*y)+(nbChiffres*x)+v)
+        return -(((line_length*y)+(nbChiffres+1)*x)+v)
     return f
 
 #TODOu
 
 ## Transformation inverse
 def predicate_to_coord(p):
-    line_length = (nbChiffres*nbChiffres)
+    line_length = (nbChiffres*(nbChiffres+1))
     y = abs(p) // line_length
-    x =  (abs(p) % line_length)//nbChiffres
-    v = (-((abs(p) % line_length) % nbChiffres),((abs(p)%line_length) % nbChiffres))[p > 0]
+    x =  (abs(p) % line_length)//(nbChiffres+1)
+    v = (-((abs(p) % line_length) % (nbChiffres+1)),((abs(p)%line_length) % (nbChiffres+1)))[p > 0]
     return (x,y,v)
 
-print(predicate_to_coord(predicate_is(4)((4,4))))
+def exists_line(x):
+    return Propositions.big_and(range(1,nbChiffres), lambda v:Propositions.big_or(line(x),lambda c:Propositions.build_atom(predicate_is(v)(c))))
+
+def exists_column(y):
+    return Propositions.big_and(range(1,nbChiffres+1), lambda v:Propositions.big_or(column(y),lambda c:Propositions.build_atom(predicate_is(v)(c))))
+
+#NOK multiple copies of subtree
+
+def one_per_line_inner(c):
+    x,y = c
+    l = line(y)
+    l.remove(c)
+    return Propositions.big_and(range(1,nbChiffres+1), lambda v:Propositions.build_or(Propositions.build_atom(predicate_isnt(v)(c)), Propositions.big_and(l, lambda c0:Propositions.build_atom(predicate_isnt(v)(c0)))))
+
+
+def one_per_line(y):
+    return Propositions.big_and(line(y), one_per_line_inner)
+
+def one_per_column(y):
+    pass
+
+def one_per_coord(c):
+    pass
+
+print(predicate_to_coord(predicate_isnt(2)((1,1))))
+#Propositions.print_tree(exists_line(1),"")
+Propositions.print_tree(exists_column(1),"")
+Propositions.print_tree(one_per_line(0),"")
