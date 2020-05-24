@@ -116,7 +116,6 @@ exists = Propositions.build_and(exists_line(),exists_column())
 tree = Propositions.build_and(one_per_column(), Propositions.build_and(one_per_line(),Propositions.build_and(one_per_file(),exists)))
 normalized_tree = Propositions.normalize(tree)
 clauses = Propositions.to_clauses(normalized_tree)
-clauses =clauses+[[predicate_is(3)((0,0))]]
 solved,values = Clauses.DP(clauses)
 result = set()
 if solved == True:
