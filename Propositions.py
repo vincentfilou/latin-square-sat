@@ -68,11 +68,7 @@ def clauses_to_dimacs(file,c):
             f.write(str(j)+" ")
         f.write("0\n")
     f.close()
-        
 
-
-
-    pass
 
 def contains_or(tree):
     if tree['type'] == "atom":

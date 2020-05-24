@@ -1,5 +1,5 @@
 import Propositions
-
+import Clauses
 # Ensembles manipules
 
 ## Produit cartesien
@@ -10,17 +10,7 @@ def Product(a,b):
             product.append((x,y))
     return product
 
-## La colonne x
-def column(x):
-    return Product([x],range(0,9))
 
-## La ligne y
-def line(y):
-    return Product(range(0,9),[y])
-
-## Le carre x,y
-def square(x,y):
-    return Product(range(x*3,x*3+3), range(y*3,y*3+3))
 
 
 # Predicats de base
@@ -123,4 +113,6 @@ tree1 = Propositions.build_and(tree, one_digit())
 normalized_tree = Propositions.normalize(tree1)
 print(Propositions.check_tree(normalized_tree, False))
 clauses = Propositions.to_clauses(normalized_tree)
-Propositions.clauses_to_dimacs("test.txt", clauses)
+clauses = clauses +[[predicate_is(1)((0,0))]]
+print(Clauses.DP(clauses))
+#Propositions.clauses_to_dimacs("test.txt", clauses)
