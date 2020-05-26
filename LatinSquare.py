@@ -1,5 +1,3 @@
-import sys
-import math
 import Propositions
 import Clauses
 
@@ -108,7 +106,6 @@ def print_result(r):
         acc += "\n"
     print(acc)      
 
-print(predicate_to_coord(predicate_is(2)((0,1))))
 exists = Propositions.build_and(exists_line(),exists_column())
 tree = Propositions.build_and(one_per_column(), Propositions.build_and(one_per_line(),Propositions.build_and(one_per_file(),exists)))
 normalized_tree = Propositions.normalize(tree)
