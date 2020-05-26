@@ -1,8 +1,9 @@
+import sys
 import math
 import Propositions
 import Clauses
 
-nbChiffres = 7
+nbChiffres = 2
 
 def Product(a,b):
     product = []
@@ -59,14 +60,11 @@ def exists_column_(y):
 def exists_column():
     return Propositions.big_and(range(0,nbChiffres), exists_column_)
 
-#NOK multiple copies of subtree?
-
 def one_per_line_inner(c):
     x,y = c
     l = line(y)
     l.remove(c)
     return Propositions.big_and(range(1,nbChiffres+1), lambda v:Propositions.build_or(Propositions.build_atom(predicate_isnt(v)(c)), Propositions.big_and(l, lambda c0:Propositions.build_atom(predicate_isnt(v)(c0)))))
-
 
 def one_per_line_(y):
     return Propositions.big_and(line(y), one_per_line_inner)
@@ -74,7 +72,6 @@ def one_per_line_(y):
 
 def one_per_line():
     return Propositions.big_and(range(0,nbChiffres),one_per_line_)
-
 
 def one_per_column_inner(c):
     x,y = c
@@ -111,13 +108,15 @@ def print_result(r):
         acc += "\n"
     print(acc)      
 
-
+print(predicate_to_coord(predicate_is(2)((0,1))))
 exists = Propositions.build_and(exists_line(),exists_column())
 tree = Propositions.build_and(one_per_column(), Propositions.build_and(one_per_line(),Propositions.build_and(one_per_file(),exists)))
 normalized_tree = Propositions.normalize(tree)
 clauses = Propositions.to_clauses(normalized_tree)
 solved,values = Clauses.DP(clauses)
+
 result = set()
+
 if solved == True:
     for c in values:
         if 0 < c[0]:
