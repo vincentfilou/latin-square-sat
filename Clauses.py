@@ -1,29 +1,4 @@
-import re
-
-
-def load_clauses(filename):
-    spaces = re.compile("\s")
-    clauses = []
-    file = open(filename,"r")
-    buffer = ""
-    x = file.read(1)
-    while x:
-        if buffer == "" and ( x == "p" or x == "c"):
-            while True:
-                x = file.read(1)
-                if x == "\n":
-                    x = ""
-                    break
-        buffer = buffer + x
-        if buffer[-2:] == " 0":
-            buffer = buffer[0:len(buffer)-2]  
-            array = spaces.split(buffer)
-            array = [int(x) for x in array if 0< len(x)]
-            clauses.append(array)
-            buffer = ""
-        x = file.read(1)
-    return clauses
-
+# l'ensemble des litéraux (atomes) d'une formule
 def get_literals(clauses):
     result = []
     for c in clauses:
@@ -31,12 +6,14 @@ def get_literals(clauses):
             result.append((x,-x)[x<0])
     return result
 
+# un littéral apparait'il dans l'ensemble des clauses?
 def appears(clauses,var):
     for c in clauses:
         if var in c:
             return True
     return False
 
+# Ensemble des litteraux apparaissant uniquement en positif (A) ou en négatif (Non A)
 def get_pure_literals(clauses):
     result = []
     for c in clauses:
@@ -52,25 +29,28 @@ def pure_elim(clauses,pure):
             result.remove(c)
     return result
 
+# Ensemble des litteraux donc la valeur est connue (une clause contient un unique literal (ex: Non A))
+# Comme la liste des clauses représente une conjonction, ce litteral est Vrai
 def get_units(clauses):
     return [x[0] for x in clauses if len(x)==1]
 
+# Si un literal est vrai, toute les clauses le contenant sont vrai.
+# De même sa négation est fausse et peut être supprimé de toute les clauses.
 def unit_propagation(clauses, unit):
-    #print("propagating unit "+str(unit))
     result = clauses[:]
     for c in clauses:
         if unit in c and 1 < len(c):
             result.remove(c)
-            #print("removing clause "+str(c))
             continue
         if -unit in c:
             back = c[:]
             result.remove(back)
             back.remove(-unit)
-            #print("transforming "+str(c)+" into "+str(back))
             result.append(back)
     return result
 
+# La formule est elle une solution? 
+# i.e. une formule ne contient que des litteraux, et pas de contradictions (clauses non vides)
 def is_sat(clauses):
     if len(clauses) == 0:
         return False
@@ -91,8 +71,6 @@ def is_unsat(clauses):
 def DP(clauses):
     x = []
     while x != clauses:
-        #print("========================================")  
-        #print(clauses)
         x = clauses[:]
         units = get_units(clauses)
         for unit in units:
@@ -103,8 +81,6 @@ def DP(clauses):
             clauses = clauses +[[lit]]
         if(is_unsat(clauses)):
             return(False,None)
-    #print("========================================")
-    #print(clauses)
     if is_sat(clauses):
         return (True,clauses)
     if is_unsat(clauses):
@@ -119,8 +95,5 @@ def DP(clauses):
         (sat1,pos1)= DP(clauses+[[-(lits[0])]])
         if sat1:
             return (True,pos1)
-    print("KO")
     return (False,None)
-    
-    #return DP(clauses)
 
