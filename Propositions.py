@@ -33,7 +33,6 @@ def normalize1(p):
         else:
             return build_and(a,b)
 
-
 def normalize(p):
     p0 = normalize1(p)
     while equal(p0,p) == False:
@@ -61,23 +60,6 @@ def to_clauses(t):
     if t['type'] == 'or':
         return [to_clauses(t['left'])[0]+to_clauses(t['right'])[0]]
 
-def clauses_to_dimacs(file,c):
-    f = open(file,"w")
-    for i in c:
-        for j in i:
-            f.write(str(j)+" ")
-        f.write("0\n")
-    f.close()
-
-
-def contains_or(tree):
-    if tree['type'] == "atom":
-        return False
-    if tree['type'] == 'or':
-        return True
-    else:
-        return contains_or(tree['left']) or  contains_or(tree['right'])
-
 def check_tree(tree,b):
     if tree['type'] == "atom":
         return True
@@ -95,9 +77,3 @@ def print_tree(p,acc):
         print(acc+p['type'])
         print_tree(p['left'],acc+"\t")
         print_tree(p['right'],acc+"\t")
-
-#test_table = [0,1,2,3,4,5]
-#print_tree(big_and(test_table,lambda x:x),"")
-#print_tree(big_or(test_table,lambda x:x),"")
-
-#KO, voir test_tree_2
